@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IT Quiz - One by One</title>
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+    }
+    .quiz-box {
+      background: rgba(255, 255, 255, 0.1);
+      padding: 30px;
+      border-radius: 20px;
+      width: 90%;
+      max-width: 600px;
+      box-shadow: 0 0 20px #00e0ff;
+      text-align: center;
+    }
+    .question {
+      font-size: 1.3em;
+      margin-bottom: 20px;
+    }
+    .options label {
+      display: block;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 10px 0;
+      padding: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .options input {
+      margin-right: 10px;
+    }
+    .options label:hover {
+      background: rgba(0, 224, 255, 0.3);
+    }
+    .btn {
+      background: #00e0ff;
+      color: #0f3460;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 25px;
+      font-size: 1em;
+      cursor: pointer;
+      margin: 15px;
+      transition: 0.3s;
+    }
+    .btn:hover {
+      background: #00bfff;
+      color: #fff;
+    }
+    .progress {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+    .progress-bar {
+      height: 10px;
+      background: #00e0ff;
+      width: 0;
+      transition: width 0.3s ease;
+    }
+    .result {
+      font-size: 1.5em;
+      color: #00ff99;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="quiz-box">
+    <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+    <div id="quiz"></div>
+    <div id="navigation">
+      <button class="btn" id="prevBtn" onclick="prevQuestion()">Prev</button>
+      <button class="btn" id="nextBtn" onclick="nextQuestion()">Next</button>
+    </div>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    const quizData = [
+      { question: "What does HTML stand for?", options: ["Hyper Text Markup Language", "Home Tool Markup Language", "Hyper Transfer Makeup Language", "High Text Machine Language"], correct: 0 },
+      { question: "Which programming language is used for web development?", options: ["Python", "C++", "JavaScript", "Swift"], correct: 2 },
+      { question: "What does CPU stand for?", options: ["Central Processing Unit", "Computer Personal Unit", "Central Programming Utility", "Control Processing Unit"], correct: 0 },
+      { question: "Which one is a database management system?", options: ["Photoshop", "MySQL", "Illustrator", "Excel"], correct: 1 },
+      { question: "What does CSS stand for?", options: ["Cascading Style Sheets", "Colorful Style System", "Creative Style Syntax", "Computer Style Sheet"], correct: 0 },
+      { question: "What is the main function of an operating system?", options: ["Manage hardware and software", "Edit videos", "Send emails", "Design websites"], correct: 0 },
+      { question: "Which one is a version control system?", options: ["Git", "Node.js", "React", "VS Code"], correct: 0 },
+      { question: "Which company developed the Windows OS?", options: ["Apple", "Google", "Microsoft", "IBM"], correct: 2 },
+      { question: "What does RAM stand for?", options: ["Random Access Memory", "Read All Memory", "Run Active Module", "Remote Access Mode"], correct: 0 },
+      { question: "Which is used to style web pages?", options: ["HTML", "CSS", "Python", "C++"], correct: 1 }
+    ];
+
+    let currentQuestion = 0;
+    const quizEl = document.getElementById("quiz");
+    const progressBar = document.getElementById("progressBar");
+    const resultEl = document.getElementById("result");
+    const prevBtn = document.getElementById("prevBtn");
+    const nextBtn = document.getElementById("nextBtn");
+
+    function loadQuestion() {
+      const q = quizData[currentQuestion];
+      quizEl.innerHTML = `
+        <div class="question">${currentQuestion + 1}. ${q.question}</div>
+        <div class="options">
+          ${q.options.map((opt, i) => `<label><input type='radio' name='q${currentQuestion}' value='${i}'> ${opt}</label>`).join("")}
+        </div>`;
+      progressBar.style.width = ((currentQuestion + 1) / quizData.length) * 100 + "%";
+      prevBtn.style.display = currentQuestion === 0 ? "none" : "inline-block";
+      nextBtn.textContent = currentQuestion === quizData.length - 1 ? "Submit" : "Next";
+    }
+
+    function nextQuestion() {
+      if (currentQuestion < quizData.length - 1) {
+        currentQuestion++;
+        loadQuestion();
+      } else {
+        calculateScore();
+      }
+    }
+
+    function prevQuestion() {
+      if (currentQuestion > 0) {
+        currentQuestion--;
+        loadQuestion();
+      }
+    }
+
+    function calculateScore() {
+      let score = 0;
+      quizData.forEach((q, i) => {
+        const selected = document.querySelector(`input[name='q${i}']:checked`);
+        if (selected && parseInt(selected.value) === q.correct) {
+          score++;
+        }
+      });
+      quizEl.style.display = "none";
+      document.getElementById("navigation").style.display = "none";
+      resultEl.style.display = "block";
+      resultEl.innerHTML = `<h2>Your Score: ${score}/${quizData.length}</h2>`;
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
